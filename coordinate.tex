@@ -134,7 +134,7 @@ xyz坐标系统也可以采用隐式标记的方法来书写。
 	\end{tikzpicture}
 \end{texlst}
 
-这里默认的名字就叫\texinline{intersection-数字}，我们也可以自己设置交点的名称。另外还可以交点的总数设置给变量。来看下面一个例子：
+这里默认的名字就是\texinline{intersection-数字}，我们也可以自己设置交点的名称。另外还可以交点的总数设置给变量。来看下面一个例子：
 \begin{texlst}
 	\usetikzlibrary{intersections}
 	\begin{tikzpicture}
@@ -224,3 +224,141 @@ xyz坐标系统也可以采用隐式标记的方法来书写。
 \end{texlst}
 
 如果\texinline{turn}后面接的不是极坐标，比如\texinline{([turn]1,1)}，这个效果相当于一个长度为$\sqrt2$偏角为$45^\circ$。
+
+一般情况下大括号对对于相对坐标的计算是没有效果的，如下例：
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw (0,0) -- ++(1,0) -- ++(0,1) -- ++(-1,0);
+		\draw[red] (2,0) -- ++(1,0) {-- ++(0,1)} -- ++(-1,0);
+	\end{tikzpicture}
+\end{texlst}
+
+仅当设置\texinline{current point is local}时会将之视为局部相对坐标计算，如下：
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw (0,0) -- ++(1,0) -- ++(0,1) -- ++(-1,0);
+		\draw[red] (2,0) -- ++(1,0) {[current point is local]-- ++(0,1)} -- ++(-1,0);
+	\end{tikzpicture}
+\end{texlst}
+
+\section{坐标计算}
+\subsection{坐标的四则运算}
+\tikzname\ 中的坐标计算需要加载\texinline{calc}库。语法为：\texinline{([options]$coordinate computation$)}
+\begin{texlst}
+	\usetikzlibrary{calc}
+	\begin{tikzpicture}
+		\draw[help lines] (0,0) grid (3,2);
+
+		\fill [red] ($2*(1,1)$) circle (2pt);
+		\fill [green] (${1+1}*(1,.5)$) circle (2pt);
+		\fill [blue] ($cos(0)*sin(90)*(1,1)$) circle (2pt);
+		\fill [black] (${3*(4-3)}*(1,0.5)$) circle (2pt);
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{比例修饰符}
+\tikzname\ 还支持比例修饰符，语法为：\texinline{($(point1)!number!angle:(point2)$)}
+\begin{texlst}
+	\usetikzlibrary{calc}
+	\begin{tikzpicture}
+		\draw [help lines] (0,0) grid (3,2);
+
+		\draw (1,0) -- (3,2);
+
+		\foreach \i in {0, 0.2, 0.5, 0.9, 1}
+		\node at ($(1,0)!\i!(3,2)$) {\i};
+	\end{tikzpicture}
+\end{texlst}
+
+再看一个有角度的例子：
+\begin{texlst}
+	\usetikzlibrary{calc}
+	\begin{tikzpicture}
+		\draw [help lines] (0,0) grid (3,3);
+
+		\coordinate (a) at (1,0);
+		\coordinate (b) at (3,2);
+
+		\draw[->] (a) -- (b);
+
+		\coordinate (c) at ($(a)!1!10:(b)$);
+
+		\draw[->, red] (a) -- (c);
+
+		\fill ($(a)!0.5!10:(b)$) circle (2pt);
+	\end{tikzpicture}
+\end{texlst}
+
+再来看一个有点复杂的例子：
+\begin{texlst}
+	\usetikzlibrary{calc}
+	\begin{tikzpicture}
+		\draw [help lines] grid (4,4);
+
+		\foreach \i in {0, 0.125, ..., 2}
+		\fill ($(2,2)!\i!\i*180:(3,2)$) circle (2pt);
+	\end{tikzpicture}
+\end{texlst}
+
+比例修饰算法可以接力完成。
+\begin{texlst}
+	\usetikzlibrary{calc}
+	\begin{tikzpicture}
+		\draw [help lines] grid (3,2);
+
+		\draw (0,0) -- (3,2);
+		\draw[red] ($(0,0)!.3!(3,2)$) -- (3,0);
+		\fill[red] ($(0,0)!.3!(3,2)!.7!(3,0)$) circle (2pt);
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{距离修饰符}
+坐标计算还有一种距离修饰符，语法为\texinline{($(point1)!dimension!angle:(point2)$)}。
+\begin{texlst}
+	\usetikzlibrary{calc}
+	\begin{tikzpicture}
+		\draw [help lines] (0,0) grid (3,2);
+
+		\draw (1,0) -- (3,2);
+
+		\foreach \i in {0cm, 1cm, 15mm}
+		\node at ($(1,0)!\i!(3,2)$) {\i};
+	\end{tikzpicture}
+\end{texlst}
+
+再来看一个带角度的例子：
+\begin{texlst}
+	\usetikzlibrary{calc}
+	\begin{tikzpicture}
+		\draw [help lines] (0,0) grid (3,2);
+
+		\coordinate (a) at (1,0);
+		\coordinate (b) at (3,1);
+
+		\draw (a) -- (b);
+
+		\coordinate (c) at ($(a)!0.25!(b)$);
+		\coordinate (d) at ($(c)!1cm!90:(b)$);
+
+		\draw[<->] (c) -- (d) node[sloped, midway, above] {1cm};
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{投影修饰符}
+投影修饰符用来求中间点在前后两点连线上的投射点，语法为\texinline{($(p1)!(p2)!angle:(p3)$)}。
+\begin{texlst}
+	\usetikzlibrary{calc}
+	\begin{tikzpicture}
+		\draw [help lines] (0,0) grid (3,2);
+
+		\coordinate (a) at (0,1);
+		\coordinate (b) at (3,2);
+		\coordinate (c) at (2.5,0);
+
+		\draw (a) -- (b) -- (c) -- cycle;
+
+		\draw[red] (a) -- ($(b)!(a)!(c)$);
+		\draw[orange] (b) -- ($(a)!(b)!(c)$);
+		\draw[blue] (c) -- ($(b)!(c)!(a)$);
+	\end{tikzpicture}
+\end{texlst}
