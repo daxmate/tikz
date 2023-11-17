@@ -1,0 +1,53 @@
+%!tex program = lualatex
+\documentclass{ctexbook}
+\usepackage[outputdir=build]{minted}
+\usepackage[a4paper, margin=2cm]{geometry}
+\markright{dax}
+\usepackage{tikz}
+\usetikzlibrary{intersections, shadings, quotes, external, fit, backgrounds, calendar, calc, positioning, arrows.meta,
+decorations.markings, decorations.pathmorphing, decorations.pathreplacing, decorations.text, shapes.misc}
+\usepackage{tcolorbox}
+\tcbuselibrary{
+	listings,
+	skins,
+	raster,
+	breakable,
+	minted,
+	hooks,
+	skins,
+}
+
+\usepackage{silence}
+\WarningFilter{latexfont}{Font shape}
+\WarningFilter{latexfont}{Some font shapes}
+
+\newtcblisting{texlst}
+{
+	sidebyside,
+	colframe=gray!60,
+	bicolor,
+	colback=green!5,
+	colbacklower=yellow!15,
+	listing engine=minted,
+	minted language=latex,
+	boxrule=0.2pt,
+	minted options app={fontsize=\tiny, linenos, numbersep=5pt},
+	righthand width=5cm,
+}
+\NewTotalTCBox{\commandbox}{ s v }
+{verbatim,colupper=black!85,colback=gray!5,colframe=white}
+{\IfBooleanT{#1}{\textcolor{black!85}{\ttfamily\bfseries \$>}}\lstinline[language=sh,keywordstyle=\color{blue!35!white}\bfseries]^#2^}
+
+\newmintinline[texminted]{tex}{}
+\newcommand{\texinline}[1]{\tikz[baseline=(code.base)] \node[rounded corners, fill=green!5, draw=green!50!black](code){\texminted{#1}};}
+
+
+\newcommand{\tikzname}{Ti\textit{k}Z}
+
+\includeonly{coordinate}
+
+\begin{document}
+% \tableofcontents
+\include{coordinate}
+\end{document}
+
