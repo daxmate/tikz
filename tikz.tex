@@ -3,6 +3,7 @@
 \usepackage[outputdir=build]{minted}
 \usepackage[a4paper, margin=2cm]{geometry}
 \markright{dax}
+\usepackage{pyluatex}
 \usepackage{tikz}
 \usetikzlibrary{intersections, shadings, quotes, external, fit, backgrounds, calendar, calc, positioning, arrows.meta,
 decorations.markings, decorations.pathmorphing, decorations.pathreplacing, decorations.text, shapes.misc}
@@ -39,15 +40,16 @@ decorations.markings, decorations.pathmorphing, decorations.pathreplacing, decor
 {\IfBooleanT{#1}{\textcolor{black!85}{\ttfamily\bfseries \$>}}\lstinline[language=sh,keywordstyle=\color{blue!35!white}\bfseries]^#2^}
 
 \newmintinline[texminted]{tex}{}
-\newcommand{\texinline}[1]{\tikz[baseline=(code.base)] \node[rounded corners, fill=green!5, draw=green!50!black](code){\texminted{#1}};}
+\newcommand{\texinline}[1]{\tikz[baseline=(code.base)] \node[inner sep=2pt, text height=8pt, text depth=2pt, rounded corners, fill=green!5, draw=green!50!black](code){\texminted{#1}};}
 
 
 \newcommand{\tikzname}{Ti\textit{k}Z}
 
-\includeonly{coordinate}
+\includeonly{path}
 
 \begin{document}
 % \tableofcontents
 \include{coordinate}
+\include{path}
 \end{document}
 
