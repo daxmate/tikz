@@ -2,6 +2,7 @@
 \documentclass{ctexbook}
 \usepackage[outputdir=build]{minted}
 \usepackage[a4paper, margin=2cm]{geometry}
+\usepackage{amsmath}
 \markright{dax}
 \usepackage{pyluatex}
 \usepackage{tikz}
@@ -9,6 +10,7 @@
 \usetikzlibrary{
 	arrows.meta,
 	backgrounds,
+	bending,
 	calc,
 	calendar,
 	decorations.markings,
@@ -40,6 +42,7 @@
 \usepackage{silence}
 \WarningFilter{latexfont}{Font shape}
 \WarningFilter{latexfont}{Some font shapes}
+\WarningFilter{latexfont}{Size substitutions}
 \newenvironment{ditemize}{\begin{tcbitemize}[raster columns=4, boxrule=0.2pt, colframe=green!50!black,
 			colback=green!5]}{\end{tcbitemize}}
 
@@ -62,17 +65,71 @@
 
 \newmintinline[texminted]{tex}{}
 \newcommand{\texinline}[1]{\begin{tikzpicture}[baseline=(code.base)]
-	\node[inner sep=2pt, text height=8pt, text depth=2pt, rounded corners, fill=green!5, draw=green!50!black](code){\texminted{#1}};
-	\useasboundingbox ([xshift=-1pt]current bounding box.west) rectangle ([xshift=1pt]current bounding box.east);
+		\node[inner sep=2pt, text height=8pt, text depth=2pt, rounded corners, fill=green!5, draw=green!50!black](code){\texminted{#1}};
+		\useasboundingbox ([xshift=-1pt]current bounding box.west) rectangle ([xshift=1pt]current bounding box.east);
 	\end{tikzpicture}}
 
 \newcommand{\tikzname}{Ti\textit{k}Z}
 
-\includeonly{pathactions}
+\newenvironment{arrowexamples}
+{\begin{tabbing}
+		\hbox to \dimexpr\linewidth-5.5cm\relax{\emph{Appearance of the below at line width} \hfil} \=
+		\hbox to 1.9cm{\emph{0.4pt}\hfil} \= \hbox to 2cm{\emph{0.8pt}\hfil} \= \emph{1.6pt} \\
+		}
+		{\end{tabbing}\vskip-1em}
+
+\makeatletter
+\def\arrowexample#1[#2]{\def\temp{#1}\ifx\temp\pgfutil@empty\arrowexample@\currentarrowtype[{#2}]\else\arrowexample@#1[{#2}]\fi}
+\def\arrowexample@#1[#2]{%
+{\sfcode`\.1000\small\texttt{#1[#2]}} \>
+\tikz [baseline,>={#1[#2]}] \draw [line
+	width=0.4pt,->] (0,.5ex) -- (2em,.5ex); thin \>
+\tikz [baseline,>={#1[#2]}] \draw [line
+	width=0.8pt,->] (0,.5ex) -- (2em,.5ex); \textbf{thick} \>
+\tikz [baseline,>={#1[#2]}] \draw [line
+	width=1.6pt,->] (0,.5ex) -- (3em,.5ex); \\
+}
+
+\def\arrowexampledouble#1[#2]{\def\temp{#1}\ifx\temp\pgfutil@empty\arrowexampledouble@\currentarrowtype[{#2}]\else\arrowexampledouble@#1[{#2}]\fi}
+\def\arrowexampledouble@#1[#2]{%
+{\sfcode`\.1000\small\texttt{#1[#2]} on double line} \>
+\tikz [baseline,>={#1[#2]}]
+\draw [double equal sign distance,line width=0.4pt,->] (0,.5ex) -- (2em,.5ex); thin \>
+\tikz [baseline,>={#1[#2]}]
+\draw [double equal sign distance,line width=0.8pt,->] (0,.5ex) -- (2em,.5ex); \textbf{thick} \>
+\tikz [baseline,>={#1[#2]}]
+\draw [double equal sign distance, line width=1.6pt,->] (0,.5ex) -- (3em,.5ex); \\
+}
+
+\newenvironment{arrowcapexamples}
+{\begin{tabbing}
+		\hbox to \dimexpr\linewidth-5.5cm\relax{\emph{Appearance of the below at line width} \hfil} \=
+		\hbox to 1.9cm{\emph{1ex}\hfil} \= \hbox to 2cm{\emph{1em}\hfil} \\
+		}
+		{\end{tabbing}\vskip-1em}
+
+\def\arrowcapexample#1[#2]{\def\temp{#1}\ifx\temp\pgfutil@empty\arrowcapexample@\currentarrowtype[{#2}]\else\arrowcapexample@#1[{#2}]\fi}
+\def\arrowcapexample@#1[#2]{%
+{\sfcode`\.1000\small\texttt{#1[#2]}} \>
+\kern-.5ex\tikz [baseline,>={#1[#2]}] \draw [line
+	width=1ex,->] (0,.5ex) -- (2em,.5ex);  \>
+\kern-.5em\tikz [baseline,>={#1[#2]}] \draw [line
+	width=1em,->] (0,.5ex) -- (2em,.5ex);  \\
+}
+\catcode`\|=12
+\gdef\pgfmanualnormalbar{|}
+\catcode`\|=13
+\AtBeginDocument{\gdef|{\ifmmode\pgfmanualnormalbar\else\expandafter\verb\expandafter|\fi}}
+
+
+\makeatother
+
+\includeonly{arrows}
 
 \begin{document}
 % \tableofcontents
 \include{coordinate}
 \include{path}
 \include{pathactions}
+\include{arrows}
 \end{document}
