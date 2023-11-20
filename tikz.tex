@@ -5,8 +5,27 @@
 \markright{dax}
 \usepackage{pyluatex}
 \usepackage{tikz}
-\usetikzlibrary{intersections, shadings, quotes, external, fit, backgrounds, calendar, calc, positioning, arrows.meta,
-decorations.markings, decorations.pathmorphing, decorations.pathreplacing, decorations.text, shapes.misc}
+\usepackage{etoolbox}
+\usetikzlibrary{
+	arrows.meta,
+	backgrounds,
+	calc,
+	calendar,
+	decorations.markings,
+	decorations.pathmorphing,
+	decorations.pathreplacing,
+	decorations.text,
+	external,
+	fadings,
+	fit,
+	intersections,
+	patterns,
+	positioning,
+	quotes,
+	shadings,
+	shadows,
+	shapes.misc,
+}
 \usepackage{tcolorbox}
 \tcbuselibrary{
 	listings,
@@ -21,35 +40,39 @@ decorations.markings, decorations.pathmorphing, decorations.pathreplacing, decor
 \usepackage{silence}
 \WarningFilter{latexfont}{Font shape}
 \WarningFilter{latexfont}{Some font shapes}
+\newenvironment{ditemize}{\begin{tcbitemize}[raster columns=4, boxrule=0.2pt, colframe=green!50!black,
+			colback=green!5]}{\end{tcbitemize}}
 
 \newtcblisting{texlst}
 {
-	sidebyside,
-	colframe=gray!60,
 	bicolor,
+	boxrule=0.2pt,
 	colback=green!5,
 	colbacklower=yellow!15,
+	colframe=gray!60,
 	listing engine=minted,
 	minted language=latex,
-	boxrule=0.2pt,
 	minted options app={fontsize=\footnotesize, linenos, numbersep=5pt},
 	righthand width=5cm,
+	sidebyside,
 }
 \NewTotalTCBox{\commandbox}{ s v }
 {verbatim,colupper=black!85,colback=gray!5,colframe=white}
 {\IfBooleanT{#1}{\textcolor{black!85}{\ttfamily\bfseries \$>}}\lstinline[language=sh,keywordstyle=\color{blue!35!white}\bfseries]^#2^}
 
 \newmintinline[texminted]{tex}{}
-\newcommand{\texinline}[1]{\tikz[baseline=(code.base)] \node[inner sep=2pt, text height=8pt, text depth=2pt, rounded corners, fill=green!5, draw=green!50!black](code){\texminted{#1}};}
-
+\newcommand{\texinline}[1]{\begin{tikzpicture}[baseline=(code.base)]
+	\node[inner sep=2pt, text height=8pt, text depth=2pt, rounded corners, fill=green!5, draw=green!50!black](code){\texminted{#1}};
+	\useasboundingbox ([xshift=-1pt]current bounding box.west) rectangle ([xshift=1pt]current bounding box.east);
+	\end{tikzpicture}}
 
 \newcommand{\tikzname}{Ti\textit{k}Z}
 
-\includeonly{path}
+\includeonly{pathactions}
 
 \begin{document}
 % \tableofcontents
 \include{coordinate}
 \include{path}
+\include{pathactions}
 \end{document}
-
