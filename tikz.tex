@@ -3,11 +3,15 @@
 \usepackage[outputdir=build]{minted}
 \usepackage[a4paper, margin=2cm]{geometry}
 \usepackage{amsmath}
+\usepackage[dvipsnames]{xcolor}
 \markright{dax}
 \usepackage{pyluatex}
 \usepackage{tikz}
+\usepackage{animate}
 \usepackage{etoolbox}
 \usetikzlibrary{
+	animations,
+	patterns.meta,
 	arrows.meta,
 	backgrounds,
 	bending,
@@ -26,16 +30,18 @@
 	quotes,
 	shadings,
 	shadows,
+	shapes.geometric,
 	shapes.misc,
+	shapes.multipart,
 }
 \usepackage{tcolorbox}
 \tcbuselibrary{
-	listings,
-	skins,
-	raster,
 	breakable,
-	minted,
 	hooks,
+	listings,
+	minted,
+	raster,
+	skins,
 	skins,
 }
 
@@ -64,10 +70,11 @@
 {\IfBooleanT{#1}{\textcolor{black!85}{\ttfamily\bfseries \$>}}\lstinline[language=sh,keywordstyle=\color{blue!35!white}\bfseries]^#2^}
 
 \newmintinline[texminted]{tex}{}
-\newcommand{\texinline}[1]{\begin{tikzpicture}[baseline=(code.base)]
-		\node[inner sep=2pt, text height=8pt, text depth=2pt, rounded corners, fill=green!5, draw=green!50!black](code){\texminted{#1}};
-		\useasboundingbox ([xshift=-1pt]current bounding box.west) rectangle ([xshift=1pt]current bounding box.east);
-	\end{tikzpicture}}
+\newcommand{\texinline}[1]{{\begin{tikzpicture}[baseline=(code.base)]
+				\node[inner sep=2pt, text height=8pt, text depth=2pt, rounded corners, fill=green!5,
+					draw=green!50!black](code){\texminted[escapeinside=||]{#1}};
+				\useasboundingbox ([xshift=-1pt]current bounding box.west) rectangle ([xshift=1pt]current bounding box.east);
+			\end{tikzpicture}}}
 
 \newcommand{\tikzname}{Ti\textit{k}Z}
 
@@ -116,15 +123,16 @@
 \kern-.5em\tikz [baseline,>={#1[#2]}] \draw [line
 	width=1em,->] (0,.5ex) -- (2em,.5ex);  \\
 }
+{
 \catcode`\|=12
 \gdef\pgfmanualnormalbar{|}
 \catcode`\|=13
 \AtBeginDocument{\gdef|{\ifmmode\pgfmanualnormalbar\else\expandafter\verb\expandafter|\fi}}
-
+}
 
 \makeatother
 
-\includeonly{arrows}
+\includeonly{nodes_and_edges}
 
 \begin{document}
 % \tableofcontents
@@ -132,4 +140,5 @@
 \include{path}
 \include{pathactions}
 \include{arrows}
+\include{nodes_and_edges}
 \end{document}

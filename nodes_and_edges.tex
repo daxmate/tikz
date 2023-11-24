@@ -1,0 +1,639 @@
+\chapter{节点和边线 Nodes and Edges}
+节点就是一个路径再加上文字，路径默认为矩形，不绘制，文字也可以没有。节点本身并非路径的一部分，而是在路径创建之前或者之后被绘制出来。
+
+\section{节点的语法}
+\verb|\path| \dots\ node
+\begin{math}
+	\langle foreach statements \rangle [\langle options\rangle] (\langle name\rangle) at (\langle coordindate\rangle) :
+	\langle animation attribute\rangle=\{\langle options\rangle\} \{\langle node contents\rangle\} \dots;
+\end{math}
+
+在\texinline{node}是后面文字内容之前的开口大括号之间都是选项内容，如果要用到\texinline{foreach}，则必须紧接在\texinline{node}关键字之后。
+
+\texinline{node}的文本可以是``脆弱''内容。即使是空文本也需要提供\texinline{{}}。
+
+\subsection{node contents}
+节点的文本内容还可以用\texinline{node contents}这个选项来设置；
+\begin{texlst}
+	\begin{tikzpicture}
+		\path    (0,0) node [red] {A}
+		         (1,0) node [blue] {B}
+		         (2,0) node [green,    node contents=C]
+		         (3,0) node [          node contents=D];
+	\end{tikzpicture}
+\end{texlst}
+如果在选项里面设置文本的话，tikz在选项的\texinline{]}就结束语句了。
+
+\subsection{at}
+手册里面说\texinline{at}也可以用在选项里面，但是我没有试验成功。其实我也不需要这个功能。
+
+\subsection{behind path}
+此选项会使节点在路径之后绘制。
+\begin{texlst}
+	\begin{tikzpicture}
+		\fill[fill=blue!50, draw=blue, very thick]
+		(0,0) node[behind path, fill=red!50] {first node}
+		-- (1.5, 0) node[behind path, fill=green!50] {second node}
+		-- (1.5, 1) node [behind path, fill=brown!50] {third node}
+		-- (0, 1) node [fill=blue!30] {fourth node} -- cycle;
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{in front of path}
+与\texinline{behind path}相反的作用，是\tikzname 的默认值。
+
+\subsection{name}
+节点的名称除了放在小括号里面还可以在选项里面设置。
+
+\subsection{alias}
+\texinline{alias}可以用来设置别名。
+
+\subsection{shape}
+\texinline{shape}键值可以用来设置节点的形状。
+
+\subsection{animation}
+动画暂时搞不定，先略过。
+搜索网上的信息说是需要编译成SVG格式，以后再研究吧。
+
+\subsection{every node}
+\begin{texlst}
+	\begin{tikzpicture}[every node/.style={draw}]
+		\draw (0,0) node {A} -- (1,1) node {B};
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{every $\langle$shape$\rangle$ node}
+\begin{texlst}
+	\begin{tikzpicture}[every rectangle node/.style={draw},
+			every circle node/.style={draw, double}]
+		\draw (0,0) node[rectangle] {A} -- (1,1) node[circle] {B};
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{execute at begin/end node}
+\begin{texlst}
+	\begin{tikzpicture}[execute at begin node={A},
+			execute at end node={D}]
+		\node[execute at begin node={B}]{C};
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{name prefix=$\langle text\rangle$}
+\begin{texlst}
+	\begin{tikzpicture}
+		\begin{scope}[name prefix=top-]
+			\node (A) at (0,1) {A};
+			\node (B) at (1,1) {B};
+			\draw (A) -- (B);
+		\end{scope}
+		\begin{scope}[name prefix=bottom-]
+			\node (A) at (0,0) {A};
+			\node (B) at (1,0) {B};
+			\draw (A) -- (B);
+		\end{scope}
+
+		\draw [red] (top-A) -- (bottom-B);
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{name suffix}
+与前缀用法相同。
+
+\section{预设的形状}
+\tikzname 预设了三种形状：
+\begin{itemize}
+	\forcsvlist{\item}{rectangle, circle, coordindate}
+\end{itemize}
+
+\section{常用选项}
+\subsection{inner sep}
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw(0,0) node[inner sep=0pt, draw] {tight}
+		(0cm, 2em) node[inner sep=5pt, draw] {loose}
+		(0cm, 4em) node[fill=yellow!80!black] {default};
+	\end{tikzpicture}
+\end{texlst}
+
+与之类似的选项还有\forcsvlist{\texinline}{inner xsep, inner ysep, outer sep, outer xsep, outer ysep}
+
+注意， \texinline{outer sep}在一些情况下可能会出现问题，
+
+1. 如果一个形状被填充，但是没有描边，这时\texinline{outer sep}的值应该要为0；
+
+2. \texinline{scale}的时候，线宽没有变化，但是\texinline{outer sep}相应的倍数变化了，所以也会有问题。
+
+这时可以用\texinline{outer sep=auto}来解决这个问题。
+
+\subsection{minimum height}
+\subsection{minimum width}
+\subsection{minimum size}
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw(0,0) node[minimum size=2cm, draw] {square};
+		\draw(0,-2) node[minimum size=2cm, draw, circle] {circle};
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{shape aspect}
+\begin{texlst}
+	\usetikzlibrary{shapes.geometric}
+	\begin{tikzpicture}
+		\draw (0,0) node[shape=diamond, shape aspect=1, draw] {aspect 1};
+		\draw (0,-2) node[shape=diamond, shape aspect=2, draw] {aspect 2};
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{shape border rotate}
+\begin{texlst}
+	\begin{tikzpicture}
+		\node[shape border rotate=30, draw, dart, shape border uses incircle] {ABC};
+	\end{tikzpicture}
+\end{texlst}
+
+\section{多部分节点}
+\subsection{\textbackslash nodepart}
+\begin{texlst}
+	\usetikzlibrary{shapes.multipart}
+	\begin{tikzpicture}[every lower node part/.style={red}]
+		\node[circle split, draw, double, fill=red!20]
+		{
+			$q_1$
+			\nodepart{lower}
+			$00$
+		};
+	\end{tikzpicture}
+\end{texlst}
+
+\section{节点文本}
+\subsection{text}
+\texinline{text=}用来设置文本的颜色
+\subsection{node font/font}
+\texinline{node font=}或者\texinline{font=}用来设置文本的字体。
+
+\subsection{tabular}
+\begin{texlst}
+	\begin{tikzpicture}
+		\node [draw] {
+			\begin{tabular}{cc}
+				upper left & upper right \\
+				lower left & lower right
+			\end{tabular}
+		};
+	\end{tikzpicture}
+\end{texlst}
+\subsection{用\textbackslash\textbackslash 换行}
+\begin{texlst}
+	\begin{tikzpicture}[align=center]
+		\node[draw] {This is a \\demonstration.};
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{text width}
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw(0,0) node[fill=yellow!80!black, text width=3cm, align=right]{
+			This is a demonstration text for showing how line breaking works.
+		};
+	\end{tikzpicture}
+\end{texlst}
+\subsection{对齐with flush}
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw(0,0) node[fill=yellow!80!black, text width=3cm, align=flush right]{
+			This is a demonstration text for showing how line breaking works.
+		};
+	\end{tikzpicture}
+\end{texlst}
+对齐选项有\forcsvlist{\texinline}{left, right, center, flush left, flush right, flush center, justify, node}
+
+\subsection{text height}
+\begin{texlst}
+	\tikz \node[draw] {y};
+	\tikz \node[draw, text height=10pt] {y};
+\end{texlst}
+
+\subsection{text depth}
+\begin{texlst}
+	\tikz \node[draw] {y};
+	\tikz \node[draw, text depth=10pt] {y};
+\end{texlst}
+
+\section{位置}
+\begin{texlst}
+	\begin{tikzpicture}
+		\node(n) [fill=blue!20, minimum width=3cm, minimum height=2cm] {Big node};
+		\draw [fill] (n.north west) circle (2pt) node[above] {north west};
+		\draw [fill] (n.north) circle (2pt) node[above] {north};
+		\draw [fill] (n.north east) circle (2pt) node[above] {north east};
+		\draw [fill] (n.west) circle (2pt) node[left] {west};
+		\draw [fill] (n.base) circle (2pt) node[below] {base};
+		\draw [fill] (n.east) circle (2pt) node[right] {east};
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{anchor}
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw (0,0) node [anchor=north east] {first node}
+		rectangle (1,1) node[anchor=west] {second node};
+	\end{tikzpicture}
+\end{texlst}
+
+\begin{texlst}
+	\begin{tikzpicture}[scale=3, transform shape]
+		\draw[anchor=center] (0,1) node{x} -- (0.5,1) node{y} -- (1,1) node{t};
+		\draw[anchor=base] (0,0.5) node{x} -- (0.5,0.5) node{y} -- (1,0.5) node{t};
+		\draw[anchor=mid] (0,0) node{x} -- (0.5,0) node{y} -- (1,0) node{t};
+	\end{tikzpicture}
+\end{texlst}
+
+其他常用的基本位置有\forcsvlist{\texinline}{above, below, left, right, above left, above right, below left}\\
+\forcsvlist{\texinline}{below right, centered}
+
+\subsection{positioning 库}
+可以使用尺寸的表达式：
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw[help lines] (0,0) grid (2,2);
+		\node at (1,1) [above=2pt+3pt, draw] {above};
+	\end{tikzpicture}
+\end{texlst}
+还可以使用数字，默认单位为\texinline{cm}:
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw[help lines] (0,0) grid (2,2);
+		\node at (1,1) [above=.5, draw] {above};
+	\end{tikzpicture}
+\end{texlst}
+
+还有一种更加复杂的形式(用above时效果看不出来)：
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw[help lines] (0,0) grid (2,2);
+		\node at (1,1) [above left=.2 and 4mm, draw] {above left};
+	\end{tikzpicture}
+\end{texlst}
+
+相对位置使用\texinline{of}:
+\begin{texlst}
+	\begin{tikzpicture}[every node/.style={draw}]
+		\draw [help lines] (0,0) grid (2,2);
+		\node (somenode) at (1,1) {some node};
+
+		\node [above=5mm of somenode.north east] {\tiny 5mm of somenode.north east};
+		\node [above=1cm of somenode.north] {\tiny 1cm of somenode.north};
+	\end{tikzpicture}
+\end{texlst}
+
+\texinline{on grid}方式排列：
+\begin{texlst}
+	\begin{tikzpicture}[every node/.style=draw]
+		\draw [help lines] (0,0) grid (2,3);
+
+		\node (a1) at (0,0) {not gridded};
+		\node (b1) [above=1cm of a1] {fooy};
+		\node (c1) [above=1cm of b1] {a};
+
+		\node (a2) at (2,0) {gridded};
+		\node (b2) [on grid, above=1cm of a2] {fooy};
+		\node (c2) [on grid, above=1cm of b2] {a};
+
+	\end{tikzpicture}
+\end{texlst}
+
+\texinline{node distance}默认为$1cm\ and\ 1cm$。
+\tikzname 中的两种节点距离写法有如下区别：
+
+
+\begin{enumerate}
+	\item \texinline{node distance=1cm}，这种写法相当于在$x$和$y$方向上各移动$\frac12\sqrt2$cm
+	\item \texinline{node distance=1cm and 1cm}，在$x$和$y$方向各移动1cm。
+\end{enumerate}
+
+\texinline{positioning}库提供了各种位置:
+
+\forcsvlist{\texinline}{above, above left, above right, below, below right, below left}
+
+\forcsvlist{\texinline}{base left, base right, mid left, mid right}
+
+此外，还可以用\texinline{matrix}和\texinline{graphdrawing}库来进行节点的排列。
+
+\section{fit}
+\begin{texlst}
+	\begin{tikzpicture}
+		\node (root) {root}
+		child {node(a){a}}
+		child {
+				node(b){b}
+				child{node (d){d}}
+				child{node (e){e}}
+			}
+		child {node (c) {c}}
+		;
+		\node[draw=red, inner sep=0pt, thick, ellipse, fit=(root) (b) (d) (e)] {};
+		\node[draw=blue, inner sep=0pt, thick, ellipse, fit=(b) (c) (d)]{};
+	\end{tikzpicture}
+\end{texlst}
+
+\section{变形}
+\begin{texlst}
+	\begin{tikzpicture}[every node/.style={draw}]
+		\draw[help lines](0,0) grid (3,2);
+		\draw (1,0) node{A}
+		(2,0) node[rotate=90, scale=1.5] {B};
+		\draw[rotate=30](1,0) node{A}
+		(2,0) node[rotate=90, scale=1.5] {B};
+		\draw[rotate=60](1,0) node[transform shape] {A}
+		(2,0) node[transform shape, rotate=90, scale=1.5] {B};
+	\end{tikzpicture}
+\end{texlst}
+上面的例子中可以看到第三组用了\texinline{transform shape}以后，在旋转的过程中节点整个的形状也跟着进行了旋转。
+
+还有一个\texinline{transform shape nonlinear}我没有太明白，后面有机会再说吧。
+
+\section{设置节点在直线或曲线上面的位置}
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw (0,0) -- (3,1)
+		node[pos=0]{0}
+		node[pos=0.5]{1/2}
+		node[pos=0.9]{9/10}
+		;
+	\end{tikzpicture}
+\end{texlst}
+
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw[help lines] (0,0) grid (3,2);
+		\draw (2,0) arc [x radius=1, y radius=2, start angle=0, end angle=180]
+		node foreach \t in {0,0.125,...,1} [pos=\t, auto] {\t};
+	\end{tikzpicture}
+\end{texlst}
+
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw (0,0) .. controls +(right:3.5cm) and +(right:3.5cm) .. (0,3)
+		node foreach \p in {0,0.125,...,1} [pos=\p] {\p};
+	\end{tikzpicture}
+\end{texlst}
+
+在\texinline{|\textbar|-}或\texinline{-|\textbar|}直角相交模式下，0.5正好在直角的位置。
+
+\subsection{auto}
+
+\begin{texlst}
+	\begin{tikzpicture}[auto=left, every node/.style={circle, fill=blue!20}]
+		\node (a) at (-1, -2) {a};
+		\node (b) at (1, -2) {b};
+		\node (c) at (2, -1) {c};
+		\node (d) at (2, 1) {d};
+		\node (e) at (1, 2) {e};
+		\node (f) at (-1, 2) {f};
+		\node (g) at (-2, 1) {g};
+		\node (h) at (-2, -1) {h};
+
+		\foreach \from/\to in {a/b, b/c, c/d, d/e, e/f, f/g, g/h, h/a}
+		\draw[->] (\from) -- (\to) node[midway, fill=red!20] {\from--\to};
+	\end{tikzpicture}
+\end{texlst}
+\texinline{auto}的值可以设为\texinline{right}
+或者\texinline{left}，根据设定值分别位于线条的左边或者右边。另外也可以设置为\texinline{false}进行取消。\texinline{auto}若与其他位置选项\texinline{above}等一起使用，则相当于给\texinline{auto}设置为\texinline{false}。
+
+\texinline{swap}会将当前的自动定位反向，如果当前是\texinline{left}，则会变成\texinline{right}。
+
+\texinline{'}是\texinline{swap}的快捷方式。
+
+\subsection{sloped}
+这个选项会让节点跟着路径的方向进行旋转。但是默认情况下不让出现颠倒的文字的。
+
+如果需要颠倒的文字，可以使用\texinline{allow upside down}选项。
+
+另外还有几个选项用来控制节点文字离路径两端距离：
+
+\begin{center}
+	\begin{tabular}{ ll }\hline
+		at start        & pos=0     \\
+		very near start & pos=0.125 \\
+		near start      & pos=0.25  \\
+		midway          & pos=0.5   \\
+		near end        & pos=0.75  \\
+		very near end   & pos=0.875 \\
+		at end          & pos=1     \\ \hline
+	\end{tabular}
+\end{center}
+
+\section{label and pin}
+\texinline{label}会使得一个新的\texinline{node}添加到当前的\texinline{node}。
+\subsection{label position}
+\texinline{label position}可以设置为角度的值，也可以设置为文字的方向。
+下面是一些可以设置的文字方向：
+
+\forcsvlist{\texinline}{east, south, west, north}等等
+
+\forcsvlist{\texinline}{above, below, left, right, above left}等等
+
+\subsection{absolute}
+用下面两个示例来演示\texinline{absolute}的效果。
+\begin{texlst}
+	\begin{tikzpicture}[rotate=-80, every label/.style={draw, red}]
+		\node[transform shape, rectangle, draw, label=right:label] {main node};
+	\end{tikzpicture}
+	\begin{tikzpicture}[rotate=-80, every label/.style={draw, red}, absolute]
+		\node[transform shape, rectangle, draw, label=right:label] {main node};
+	\end{tikzpicture}
+\end{texlst}
+
+上面的例子里面也使用了\texinline{label=right:label
+	name}这样的语法。方向的地方还可以用角度。此外，还可以给\texinline{label}用上颜色。
+
+\begin{texlst}
+	\begin{tikzpicture}
+		\node[transform shape, rotate=90, rectangle, draw, label={[red]center:R}]{main node};
+	\end{tikzpicture}
+\end{texlst}
+
+也可以给\texinline{label}设置一个名称：
+\begin{texlst}
+	\begin{tikzpicture}
+		\node [circle, draw, label={[name=label node]above left:$a,b$}]{};
+		\draw (label node) -- +(1,1);
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{label distance}
+此选项用来设置主节点与\texinline{label}之间的距离。
+\begin{texlst}
+	\begin{tikzpicture}[label distance=5mm]
+		\node[circle, draw, label=right:X,
+			label=above right:Y,
+			label=above:Z] {my circle};
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{every label}
+用来设置所有\texinline{label}的属性，默认值是\texinline{draw=none, fill=none}。
+
+\subsection{pin}
+\texinline{pin}跟\texinline{label}很像，只是多一根连线连接\texinline{pin}与主节点。
+与\texinline{label}一样，\texinline{pin}也有\texinline{pin distance}、\texinline{every pin}以及\texinline{pin
+	position}。此外，因为\texinline{pin}有连线，所以多了两个新的属性,\texinline{pin edge}和\\\texinline{every pin edge}。
+\begin{texlst}
+	\begin{tikzpicture}[pin distance=10mm]
+		\node[circle, draw, pin={[pin edge={blue, thick}]right:X}, pin=above:Z] {my circle};
+	\end{tikzpicture}
+\end{texlst}
+
+\begin{texlst}
+	\begin{tikzpicture}[every pin edge/.style={},
+			initial/.style={pin={[pin distance=5mm,
+									pin edge={<-, shorten <=1pt}]left:start}}]
+		\node[circle, draw, initial]{my circle};
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{quotes}
+\begin{texlst}
+	\begin{tikzpicture}
+		\node ["my label" red, draw] {my node};
+	\end{tikzpicture}
+\end{texlst}
+\texinline{quotes}是\texinline{label}或者\texinline{pin}的便捷写法。默认情况下\texinline{quotes}生成的是\texinline{label}，即\\\texinline{quotes
+	mean label}，当然也可以设置为\texinline{quotes mean pin}。
+\begin{texlst}
+	\begin{tikzpicture}[quotes mean pin]
+		\node["$90^\circ$" above, "$180^\circ$" left, circle, draw] {circle};
+	\end{tikzpicture}
+\end{texlst}
+
+此外，对于所有相应的\texinline{label}和\texinline{pin}可以用\texinline{every label quotes}和\texinline{every pin
+	quotes}来设置样式。
+
+可以用\texinline{node quotes mean=}来设置\texinline{label}或者\texinline{pin}的样式，如下例：
+\tikzset{node quotes mean={label={[#2, name={#1}]#1}}}
+\begin{texlst}
+	\begin{tikzpicture}
+		\node["1", "2" label position=left, circle, draw] {circle};
+		\draw (1) -- (2);
+	\end{tikzpicture}
+\end{texlst}
+
+\section{连接节点 -- 坐标方式}
+如果给节点命名后，则可以将节点的名称用小括号括起来当作坐标一样来使用，当然也可以使用节点的各个锚点。不过，\tikzname
+会聪明的处理线条的连接，只会将连线绘制到节点的边界，而不会真的绘制到节点的中心。
+\begin{texlst}
+	\begin{tikzpicture}
+		\path    (0,0) node (x)               {Hello World!}
+		         (3,1) node [circle, draw](y) {$\int_1^2 \mathrm d x$};
+
+		\draw[->, blue] (x) -- (y);
+		\draw[->, red] (x) -| node[near start, below] {label} (y);
+		\draw[->, orange] (x) .. controls +(up:1cm) and +(left:1cm) .. node[above, sloped] {label} (y);
+	\end{tikzpicture}
+\end{texlst}
+
+\section{连接节点 -- edge方式}
+\begin{texlst}
+	\begin{tikzpicture}
+		\node foreach \name/\angle in {a/0, b/90, c/180, d/270}
+		(\name) at (\angle:1) {$\name$};
+
+		\path[->]
+			(b) edge (a)
+			    edge (c)
+			    edge [dotted] (d)
+			(c) edge (a)
+			    edge (d)
+			(d) edge (a);
+	\end{tikzpicture}
+\end{texlst}
+
+\begin{texlst}
+	\begin{tikzpicture}
+		\node foreach \name/\angle in {a/0, b/90, c/180, d/270}
+		(\name) at (\angle:1.5) {$\name$};
+		\path[->]
+			(b) edge                           node [above right] {$5$} (a)
+			    edge (c)
+			    edge [-, dotted]               node [below, sloped] {missing} (d)
+			(c) edge (a)
+			    edge (d)
+			(d) edge [red]                     node [above, sloped] {very}
+			    node [below, sloped] {bad} (a);
+	\end{tikzpicture}
+\end{texlst}
+
+在\texinline{node}的\texinline{edge}连线上也同样可以使用\texinline{quotes}。
+注意下例中的\texinline{'}的用法：
+\begin{texlst}
+	\begin{tikzpicture}
+		\draw (0,0) edge ["left", "right"',
+				"start" near start, "end" near end] (4,0);
+	\end{tikzpicture}
+\end{texlst}
+
+\section{在外部引用节点}
+\subsection{在别的图片中引用节点}
+\begin{enumerate}
+	\item 首先要将相关的图片设置为\texinline{remember picture}。
+	\item 在需要引用节点的图片中要设置为\texinline{overlay}，这个选项会将包围的盒子计算功能关闭。
+	\item 需要编译两遍。
+\end{enumerate}
+
+\begin{texlst}
+	\begin{tikzpicture}[remember picture]
+		\node[circle, fill=red!50](n1) {};
+	\end{tikzpicture}
+\end{texlst}
+\begin{texlst}
+	\begin{tikzpicture}[remember picture]
+		\node{};
+		\node[rectangle, fill=blue!50](n2) at (2,0){};
+	\end{tikzpicture}
+\end{texlst}
+\begin{texlst}
+	\begin{tikzpicture}[remember picture]
+		\node(c) [circle, draw] {Big circle};
+		\draw[overlay, ->, very thick, red, opacity=.5] (c) to[bend left] (n1)
+		(n1) -| (n2)
+		(n1) -- (n2);
+	\end{tikzpicture}
+\end{texlst}
+
+\subsection{引用本页上的节点}
+\tikzname 提供了一个特殊的节点\texinline{current page}。
+\begin{texlst}
+	\begin{tikzpicture}[remember picture, overlay]
+		\node [xshift=1cm, yshift=1cm] at (current page.south west) [text width=7cm, fill=red!20, rounded corners, above
+			right] {This is an absolutely positioned text in the lower left corner. No shipout-hackery is used.};
+	\end{tikzpicture}
+\end{texlst}
+
+\begin{texlst}
+	\begin{tikzpicture}[remember picture, overlay]
+		\draw [line width=1mm, opacity=0.25] (current page.center) circle(3cm);
+	\end{tikzpicture}
+\end{texlst}
+
+\begin{texlst}
+	\begin{tikzpicture}[remember picture, overlay]
+		\node [line width=1mm, scale=10, opacity=.25, rotate=60]  at (current page.center) {Example};
+	\end{tikzpicture}
+\end{texlst}
+
+\section{节点的追加代码和追加选项}
+\tikzname 可以对现在节点进行追加设置。如下例：
+\newpage
+\begin{texlst}
+	\begin{tikzpicture}
+		\node [draw, circle] (a) {hello};
+		\node also [label=above:world] (a);
+	\end{tikzpicture}
+\end{texlst}
+
+\begin{texlst}
+	\begin{tikzpicture}
+		\node [draw, circle] (a) {Hello};
+		\path [late options={name=a, label=right:world}];
+	\end{tikzpicture}
+\end{texlst}
