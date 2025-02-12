@@ -1,6 +1,6 @@
 \chapter{路径构建}
 路径包括构建路径，以及路径操作。本章主要讲解构建这一部分。\texinline{\path (0,0) --
-	(1,1);}会新建一条路径，但是表面上看不到什么变化。路径的操作要将操作的内容放置在\texinline{[]}中，比如\texinline{\path[draw]
+	(1,1);}会新建一条路径，但是表面上看不到什么变化。路径的操作要将操作的内容放置在\texinline{[]}中，比如\\\texinline{\path[draw]
 	(0,0) -- (1,1);}，而我们平时用的\texinline{\draw}命令其实只是\texinline{\path[draw]}的快捷方式。
 \section{移动 Move-To}
 这个操作就像是提着笔移动到一个位置，但是没有下笔画任何内容。
@@ -18,12 +18,12 @@
 	\draw (0,0) -- (1,0) -- (1,1) -- (0,1) -- (current subpath start);
 \end{texlst}
 
-\section{直线连接符\tt{--}}
+\section[直线连接符]{直线连接符\tt{--}}
 这个是最常用的，与此操作符类似的还有\texinline{to}和\texinline{edge}，\texinline{--}是最简单的，无法搭配选项使用。
 
 注意，在需要图形实现闭包的情况下，最后需要用\texinline{cycle}来代替初始点。否则接头的地方实现不是完美的接合。
 
-\section{直角连接符\tt{|-}\quad、\tt{-|}}
+\section[直角连接符]{直角连接符\tt{|-}\quad、\tt{-|}}
 这两个操作符使用起来非常直观。
 \begin{texlst}
 	\begin{tikzpicture}
@@ -84,7 +84,7 @@
 \section{圆弧 arc}
 圆弧一般都会提供\texinline{start angle}和\texinline{end angle}，另外还有一个\texinline{delta angle}。如果\texinline{end
 	angle}为空，则用\texinline{start angle}加上\texinline{delta angle}来代替。如果\texinline{start angle}为空，则用\texinline{end
-	angle}减去\texinline{delta angle}来代替。若三者都提供了\texinline{delta angle}不起任何作用。
+	angle}减去\\\texinline{delta angle}来代替。若三者都提供了\texinline{delta angle}不起任何作用。
 \begin{texlst}
 	\begin{tikzpicture}[radius=1cm, delta angle=30]
 		\draw (-1,0) -- +(3.5,0);

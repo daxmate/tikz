@@ -1,6 +1,6 @@
 %!tex program = lualatex
 \documentclass{ctexbook}
-\usepackage[outputdir=build]{minted}
+\usepackage{minted}
 \usepackage[a4paper, margin=2cm]{geometry}
 \usepackage{amsmath}
 \usepackage[dvipsnames]{xcolor}
@@ -9,6 +9,7 @@
 \usepackage{tikz}
 \usepackage{animate}
 \usepackage{etoolbox}
+\usepackage[hidelinks]{hyperref}
 \usetikzlibrary{
 	angles,
 	animations,
@@ -133,10 +134,17 @@
 
 \makeatother
 
-\includeonly{pics}
+% 定制ctex文档样式
+\ctexset{
+	section = {
+		format += {\flushleft}
+	}
+}
+
+\includeonly{coordinate}
 
 \begin{document}
-% \tableofcontents
+\tableofcontents
 \include{coordinate}
 \include{path}
 \include{pathactions}
