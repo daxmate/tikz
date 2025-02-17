@@ -1,60 +1,64 @@
 %!tex program = lualatex
 \documentclass{ctexbook} 							% ctex文档类型支持中文
+\usepackage{tcolorbox} 								% 彩色文本框
 \usepackage{minted}									% 代码抄录支持
 \usepackage[a4paper, margin=2cm]{geometry}			% 页面布局设置
 \usepackage{amsmath}								% 数学功能增强
 \usepackage[dvipsnames]{xcolor}						% 颜色
 \usepackage{tikz}									% 绘图基础库
-\usepackage[hidelinks]{hyperref} 					% 处理超链接,hidelinks选项可以去除掉链接外面的红框
+
+% 加载TikZ库
 \usetikzlibrary{
-	angles,
-	arrows.meta,
-	backgrounds,
-	bending,
-	calc,
-	calendar,
-	decorations.markings,
-	decorations.pathmorphing,
-	decorations.pathreplacing,
-	decorations.text,
-	external,
-	fadings,
-	fit,
-	intersections,
-	patterns,
-	patterns.meta,
-	positioning,
-	quotes,
-	shadings,
-	shadows,
-	shapes.geometric,
-	shapes.misc,
-	shapes.multipart,
+	angles,											% 角度的便捷标注
+	arrows.meta,									% 提供各种箭头样式
+	backgrounds,									% 定义图片背景
+	bending,										% 弯曲与可伸缩的箭头
+	calc,											% 坐标计算
+	calendar,										% 绘制日历
+	decorations.markings,							% 装饰记号
+	decorations.pathmorphing,						% 装饰变形
+	decorations.pathreplacing,						% 装饰路径替换
+	decorations.text,								% 装饰文本
+	external,										% 将图片保存在外部
+	fadings,										% 创建透明度渐变效果
+	fit,											% 创建适配指定节点或坐标的包围框节点
+	intersections, 									% 交点
+	patterns,										% 填充图形
+	patterns.meta,									% 自定义填充图形
+	positioning,									% 节点的高级摆放
+	quotes,											% 引号内容设置为节点文本
+	shadings,										% 颜色渐变
+	shadows,										% 阴影
+	shapes.geometric,								% 几何形状
+	shapes.misc,									% 其他形状
+	shapes.multipart,								% 分部形状
 }
-\usepackage{tcolorbox}
 \tcbuselibrary{
-	breakable,
-	hooks,
-	listings,
-	minted,
-	raster,
-	skins,
-	skins,
+	breakable,										% 允许文本框断页
+	hooks,											% 钩子
+	listings,										% 抄录
+	minted,											% 加载minted抄录环境支持
+	raster,											% 栅格化排列多个文本框
+	skins,											% 文本框皮肤
 }
 
+% 屏蔽一些不影响的警告
 \usepackage{silence}
 \WarningFilter{latexfont}{Font shape}
 \WarningFilter{latexfont}{Some font shapes}
 \WarningFilter{latexfont}{Size substitutions}
+
+%  列表环境
 \newenvironment{ditemize}{\begin{tcbitemize}[raster columns=4, boxrule=0.2pt, colframe=green!50!black,
 			colback=green!5]}{\end{tcbitemize}}
 
+% texlst 环境
 \newtcblisting{texlst}
 {
 	bicolor,
 	boxrule=0.2pt,
-	colback=green!5,
-	colbacklower=yellow!15,
+	colback=green!3,
+	colbacklower=red!3,
 	colframe=gray!60,
 	listing engine=minted,
 	minted language=latex,
@@ -62,10 +66,13 @@
 	righthand width=5cm,
 	sidebyside,
 }
+
+% 行内shell命令抄录环境
 \NewTotalTCBox{\commandbox}{ s v }
 {verbatim,colupper=black!85,colback=gray!5,colframe=white}
 {\IfBooleanT{#1}{\textcolor{black!85}{\ttfamily\bfseries \$>}}\lstinline[language=sh,keywordstyle=\color{blue!35!white}\bfseries]^#2^}
 
+% texinline环境
 \newmintinline[texminted]{tex}{}
 \newcommand{\texinline}[1]{{\begin{tikzpicture}[baseline=(code.base)]
 				\node[inner sep=2pt, text height=8pt, text depth=2pt, rounded corners=1pt, fill=green!5,
@@ -73,70 +80,20 @@
 				\useasboundingbox ([xshift=-1pt]current bounding box.west) rectangle ([xshift=1pt]current bounding box.east);
 			\end{tikzpicture}}}
 
+% TikZ
 \newcommand{\tikzname}{Ti\textit{k}Z}
-
-\newenvironment{arrowexamples}
-{\begin{tabbing}
-		\hbox to \dimexpr\linewidth-5.5cm\relax{\emph{Appearance of the below at line width} \hfil} \=
-		\hbox to 1.9cm{\emph{0.4pt}\hfil} \= \hbox to 2cm{\emph{0.8pt}\hfil} \= \emph{1.6pt} \\
-		}
-		{\end{tabbing}\vskip-1em}
-
-\makeatletter
-\def\arrowexample#1[#2]{\def\temp{#1}\ifx\temp\pgfutil@empty\arrowexample@\currentarrowtype[{#2}]\else\arrowexample@#1[{#2}]\fi}
-\def\arrowexample@#1[#2]{%
-{\sfcode`\.1000\small\texttt{#1[#2]}} \>
-\tikz [baseline,>={#1[#2]}] \draw [line
-	width=0.4pt,->] (0,.5ex) -- (2em,.5ex); thin \>
-\tikz [baseline,>={#1[#2]}] \draw [line
-	width=0.8pt,->] (0,.5ex) -- (2em,.5ex); \textbf{thick} \>
-\tikz [baseline,>={#1[#2]}] \draw [line
-	width=1.6pt,->] (0,.5ex) -- (3em,.5ex); \\
-}
-
-\def\arrowexampledouble#1[#2]{\def\temp{#1}\ifx\temp\pgfutil@empty\arrowexampledouble@\currentarrowtype[{#2}]\else\arrowexampledouble@#1[{#2}]\fi}
-\def\arrowexampledouble@#1[#2]{%
-{\sfcode`\.1000\small\texttt{#1[#2]} on double line} \>
-\tikz [baseline,>={#1[#2]}]
-\draw [double equal sign distance,line width=0.4pt,->] (0,.5ex) -- (2em,.5ex); thin \>
-\tikz [baseline,>={#1[#2]}]
-\draw [double equal sign distance,line width=0.8pt,->] (0,.5ex) -- (2em,.5ex); \textbf{thick} \>
-\tikz [baseline,>={#1[#2]}]
-\draw [double equal sign distance, line width=1.6pt,->] (0,.5ex) -- (3em,.5ex); \\
-}
-
-\newenvironment{arrowcapexamples}
-{\begin{tabbing}
-		\hbox to \dimexpr\linewidth-5.5cm\relax{\emph{Appearance of the below at line width} \hfil} \=
-		\hbox to 1.9cm{\emph{1ex}\hfil} \= \hbox to 2cm{\emph{1em}\hfil} \\
-		}
-		{\end{tabbing}\vskip-1em}
-
-\def\arrowcapexample#1[#2]{\def\temp{#1}\ifx\temp\pgfutil@empty\arrowcapexample@\currentarrowtype[{#2}]\else\arrowcapexample@#1[{#2}]\fi}
-\def\arrowcapexample@#1[#2]{%
-{\sfcode`\.1000\small\texttt{#1[#2]}} \>
-\kern-.5ex\tikz [baseline,>={#1[#2]}] \draw [line
-	width=1ex,->] (0,.5ex) -- (2em,.5ex);  \>
-\kern-.5em\tikz [baseline,>={#1[#2]}] \draw [line
-	width=1em,->] (0,.5ex) -- (2em,.5ex);  \\
-}
-{
-\catcode`\|=12
-\gdef\pgfmanualnormalbar{|}
-\catcode`\|=13
-\AtBeginDocument{\gdef|{\ifmmode\pgfmanualnormalbar\else\expandafter\verb\expandafter|\fi}}
-}
 
 \makeatother
 
 % 定制ctex文档样式
 \ctexset{
-	section = {
-		format += {\flushleft}
-	}
+section = {
+format += {\flushleft}
+}
 }
 
-\includeonly{coordinate}
+% \includeonly{coordinate}
+\usepackage[hidelinks]{hyperref} 					% 处理超链接,hidelinks选项可以去除掉链接外面的红框
 
 \begin{document}
 \tableofcontents
